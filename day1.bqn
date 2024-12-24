@@ -21,9 +21,9 @@ Part1       ← {
 part1test ← Part1 "day1testinput.txt"
 ! part1test = 11
 •Show part1test
-part1 ← Part1 "day1input.txt"
-! part1 = 2264607
-•Show part1
+part1result ← Part1 "day1input.txt"
+! part1result = 2264607
+•Show part1result
 
 Part2 ← {
     input   ← ReadInput 𝕩
@@ -34,6 +34,6 @@ Part2 ← {
 part2test ← Part2 "day1testinput.txt"
 ! part2test = 31
 •Show part2test
-part2 ← Part2 "day1input.txt"
-! part2 = 19457120
-•Show part2
+part2result ← Part2 "day1input.txt"
+! part2result = 19457120
+•Show part2result
