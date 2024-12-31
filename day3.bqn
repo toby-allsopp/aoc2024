@@ -35,6 +35,18 @@ ParseSeq ← {
     F2←𝕩⊸F
     MakeParser f2
 }
+ParseAlt ← {
+    F←{
+        ⟨⟩𝕊𝕩: ⟨⟨⟩,𝕩⟩ ;
+        𝕨𝕊input:
+            # •Show 𝕨⋈𝕩
+            p←⊑𝕨
+            ps←1↓𝕨
+            {result‿rest: result‿rest; ps F input}p.Run input
+    }
+    F2←𝕩⊸F
+    MakeParser f2
+}
 parseDigit ←  (-⟜'0')_MapParser ('0'⊸≤∧≤⟜'9')_ParseGuard parseChar
 parseNumber ← {+´𝕩×10⋆⌽↕≠𝕩}_MapParser ((0<≠)∧(4>≠))_ParseGuard ParseRepeat parseDigit
 ! ⟨123, "abc"⟩ ≡ parseNumber.Run "123abc"
@@ -49,15 +61,28 @@ part1test ← Part1 "day3testinput.txt"
 ! part1test = 161
 part1result ← Part1 "day3input.txt"
 •Show part1result
-!part1result = 188192787
+! part1result = 188192787
 
-# Part2 ← {
-#     input   ← ReadInput 𝕩
-#     input
-# }
-# part2test ← Part2 "day3testinput.txt"
-# •Show part2test
-# ! part2test = 4
-# part2result ← Part2 "day3input.txt"
-# •Show part2result
-# ! part2result = 531
+Part2 ← {
+    input       ← ReadInput 𝕩
+    parseMul    ← ParseSeq ⟨ParseLiteral "mul(", parseNumber, ParseLiteral ",", parseNumber, ParseLiteral ")"⟩
+    parseDo     ← ParseLiteral "do()"
+    parseDont   ← ParseLiteral "don't()"
+    parse       ← ParseAlt ⟨parseMul, parseDo, parseDont⟩
+    initState   ← {total⇐0⋄enabled⇐1}
+    AddTotal    ← {total⇐𝕩.total+𝕩.enabled×𝕨⋄enabled⇐𝕩.enabled}
+    SetEnabled  ← {total⇐𝕩.total⋄enabled⇐𝕨}
+    result      ← initState {
+        ⟨"mul(",m,·,n,·⟩‿·𝕊x: (m×n) AddTotal 𝕩;
+        "do()"          ‿·𝕊x: 1 SetEnabled 𝕩;
+        "don't()"       ‿·𝕊x: 0 SetEnabled 𝕩;
+        𝕩
+    }´ parse.Run¨ ⌽↓input
+    result.total
+}
+part2test ← Part2 "day3testinput2.txt"
+•Show part2test
+! part2test = 48
+part2result ← Part2 "day3input.txt"
+•Show part2result
+! part2result = 113965544
